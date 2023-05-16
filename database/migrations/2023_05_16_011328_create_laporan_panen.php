@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('berat_panen');
             $table->year('tahun_panen');
             $table->enum('kondisi_tanaman', ['Baik', 'Buruk']);
+            $table->string('gambar_tanaman');
             $table->timestamps();
         });
     }

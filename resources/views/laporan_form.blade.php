@@ -11,7 +11,7 @@
             <div class="row">
                 {{-- Data Diri Formulir --}}
                 <div class="col-xl-12 p-2 m-2 rounded" id="data-diri-form">
-                    <form action="{{ isset($laporan) ? route('laporan.update', $laporan->id_laporan) : route('laporan.store') }}" method="post">
+                    <form action="{{ isset($laporan) ? route('laporan.update', $laporan->id_laporan) : route('laporan.store') }}" method="post" enctype="multipart/form-data">
                         @csrf
                         {!! isset($laporan) ? method_field('PUT') : '' !!}
 
@@ -36,6 +36,10 @@
                                 <option {{ isset($laporan) ? (($laporan->kondisi_tanaman == "Baik")) ? 'selected' : '' : '' }} value="baik">Baik</option>
                                 <option {{ isset($laporan) ? (($laporan->kondisi_tanaman == "Buruk")) ? 'selected' : '' : '' }} value="buruk">Buruk</option>
                             </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="no_hp" class="col-form-label">Gambar Tanaman</label>
+                            <input type="file" name="file" id="gambar_tanaman" class="form-control border-0" value="">
                         </div>
                         <button type="submit" class="btn btn-primary">{{ isset($laporan) ? 'Ubah' : 'Tambah' }} Data</button>
                     </form>

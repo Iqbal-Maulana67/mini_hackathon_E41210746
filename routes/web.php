@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\LaporanController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,8 +20,8 @@ use Illuminate\Support\Facades\Route;
 //     return view('laporan');
 // });
 
-// Route::get('/laporan_form', function () {
-//     return view('laporan_form');
-// });
+Auth::routes();
 
 Route::resource('laporan', LaporanController::class);
+
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');

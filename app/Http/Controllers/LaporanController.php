@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\LaporanPanen;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
+use Intervention\Image\Facades\Image;
 
 class LaporanController extends Controller
 {
@@ -19,7 +21,39 @@ class LaporanController extends Controller
 
     //Method ini digunakan untuk memasukkan data pada database sesuai kolom DB dan name pada input di view.
     public function store(Request $request){
-        LaporanPanen::create($request->all());
+
+        $this->validate($request, [
+            'file' => 'required'
+        ]);
+
+
+        $path = public_path('img/gambar_tanaman');
+
+        if (!File::isDirectory($path)) {
+            File::makeDirectory($path, 0777, true);
+        }
+
+        $file = $request->file('file');
+
+        $fileName = 'img_'. uniqid() . '.' . $file->getClientOriginalExtension();
+
+        $canvas = Image::canvas(200, 200);
+
+        $resizeImage = Image::make($file)->resize(null, 200, function($constraint) {
+            $constraint->aspectRatio();
+        });
+
+        $canvas->insert($resizeImage, 'center');
+
+        $canvas->save($path . '/' . $fileName);
+        
+        LaporanPanen::create([
+            "nama_tanaman" => $request->nama_tanaman,
+            "berat_panen" => $request->berat_panen,
+            "tahun_panen" => $request->tahun_panen,
+            "kondisi_tanaman" => $request->kondisi_tanaman,
+            "gambar_tanaman" => $request->file('file')->getClientOriginalName(),
+        ]);
 
         return redirect()->route('laporan.index');
     }
