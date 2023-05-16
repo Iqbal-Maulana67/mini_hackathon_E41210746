@@ -7,21 +7,19 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
 
-class LaporanController extends Controller
+class ApiLaporanPanenController extends Controller
 {
-    public function index(){
+    public function getAll(){
         $laporan = LaporanPanen::all();
-
-        return view('laporan', compact('laporan'));
+        return response()->json($laporan, 201);
     }
-    
-    public function create(){
-        return view('laporan_form');
+    public function getSpecData($id){
+        $laporan = LaporanPanen::find($id);
+
+        return response()->json($laporan, 200);
     }
 
-    //Method ini digunakan untuk memasukkan data pada database sesuai kolom DB dan name pada input di view.
-    public function store(Request $request){
-
+    public function createData(Request $request){
         $this->validate($request, [
             'file' => 'required'
         ]);
@@ -54,24 +52,23 @@ class LaporanController extends Controller
             "kondisi_tanaman" => $request->kondisi_tanaman,
             "gambar_tanaman" => $fileName,
         ]);
-
-        return redirect()->route('laporan.index');
+        
+        return response()->json([
+            'status' => 'ok',
+            'message' => 'Laporan berhasil ditambahkan'
+        ], 201);
     }
 
-    //Method ini digunakan untuk menampilkan view add page dan melontarkan data variabel pegawai dari parameter ke view.
-    public function edit(LaporanPanen $laporan){
-        return view('laporan_form', compact('laporan'));
-    }
+    public function updateData($id, Request $request){
+        $data = LaporanPanen::find($id);
 
-    //Method ini digunakan untuk mengubah data sesuai primary key DB dan menjalankan method index dengan route yang telah dibuat.
-    public function update(Request $request, LaporanPanen $laporan){
         $path = public_path('img/gambar_tanaman');
         
 
         if($request->hasFile('file')){
             $file = $request->file('file');
 
-            $fileName = $laporan->gambar_tanaman;
+            $fileName = $data->gambar_tanaman;
 
             $canvas = Image::canvas(200, 200);
 
@@ -82,7 +79,7 @@ class LaporanController extends Controller
             $canvas->insert($resizeImage, 'center');
 
             $canvas->save($path . '/' . $fileName);    
-            $laporan->update([
+            $data->update([
                 "nama_tanaman" => $request->nama_tanaman,
                 "berat_panen" => $request->berat_panen,
                 "tahun_panen" => $request->tahun_panen,
@@ -92,7 +89,7 @@ class LaporanController extends Controller
 
         }else{
 
-            $laporan->update([
+            $data->update([
                 "nama_tanaman" => $request->nama_tanaman,
                 "berat_panen" => $request->berat_panen,
                 "tahun_panen" => $request->tahun_panen,
@@ -100,19 +97,26 @@ class LaporanController extends Controller
             ]);
 
         }
-        
-        return redirect()->route('laporan.index');
+
+        $data->save();
+
+        return response()->json([
+            'status' => 'ok',
+            'message' => 'Data berhasil diubah'
+        ], 200);
     }
 
-    //Method ini digunakan untuk menghapus data sesuai primary key DB dan menjalankan method index dengan route yang telah dibuat.
-    public function destroy(LaporanPanen $laporan){
+    public function deleteData($id){
+        $data = LaporanPanen::find($id);
         $path = public_path('img/gambar_tanaman');
 
-
-        $laporan->delete(); 
+        $data->delete(); 
         
-        File::delete($path . '/' . $laporan->gambar_tanaman);
+        File::delete($path . '/' . $data->gambar_tanaman);
 
-        return redirect()->route('laporan.index');
+        return response()->json([
+            'status' => 'ok',
+            'message' => 'Data berhasil dihapus!'
+        ], 200);
     }
 }

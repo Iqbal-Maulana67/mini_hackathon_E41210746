@@ -21,6 +21,7 @@
                             <th>Berat Panen (KG)</th>
                             <th>Tahun Panen</th>
                             <th>Kondisi Tanaman</th>
+                            <th>Gambar</th>
                             <th>Aksi</th>
                         <tbody>
                             @foreach ($laporan as $item)
@@ -29,6 +30,7 @@
                                 <td>{{ $item->berat_panen }}</td>
                                 <td>{{ $item->tahun_panen }}</td>
                                 <td>{{ $item->kondisi_tanaman }}</td>
+                                <td><img src="{{ asset('img/gambar_tanaman/'. $item->gambar_tanaman)}}" alt=""></td>
                                 <td>
                                     <div class="btn-group">
                                         <a href="{{ route('laporan.edit', $item->id_laporan) }}"><button class="btn btn-warning"><i class="fas fa-edit fa-sm"></i></button></a>

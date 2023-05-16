@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ApiLaporanPanenController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,3 +18,11 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+
+Route::get('api_laporan', [ApiLaporanPanenController::class, 'getAll']);
+Route::get('api_laporan/{id}', [ApiLaporanPanenController::class, 'getSpecData']);
+Route::post('api_laporan', [ApiLaporanPanenController::class, 'createData']);
+Route::put('api_laporan/{id}', [ApiLaporanPanenController::class, 'updateData']);
+Route::delete('api_laporan/{id}', [ApiLaporanPanenController::class, 'deleteData']);
+
